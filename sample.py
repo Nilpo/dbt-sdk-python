@@ -12,7 +12,7 @@ dbt = Dbt.Dbt(api_key)
 response = dbt.get_api_version()
 json_response = json.loads(response)
 for k, v in json_response.items():
-    print("{k}: {v}".format(**locals()))
+    print(f"{k}: {v}")
 
 # Get the root locations of audio files
 response = dbt.get_audio_location(protocol='http')
@@ -52,7 +52,7 @@ for verse in verses:
     b = verse['book_name']
     c = verse['chapter_id']
     v = verse['verse_id']
-    print("{b} {c}:{v}".format(**locals()))
+    print(f"{b} {c}:{v}")
     print(verse['verse_text'])
 
 # Get Genesis 1:1-2 from the KJV
@@ -62,5 +62,5 @@ for verse in verses:
     b = verse['book_name']
     c = verse['chapter_id']
     v = verse['verse_id']
-    print("{b} {c}:{v}".format(**locals()))
+    print(f"{b} {c}:{v}")
     print(verse['verse_text'])
