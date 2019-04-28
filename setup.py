@@ -7,7 +7,6 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name='dbtsdk',
     version='0.1',
-    scripts=['dbtsdk'],
     author="Rob Dunham",
     author_email="devnilpo@gmail.com",
     description="DBT API SDK for Python",
