@@ -18,6 +18,7 @@ Source: https://github.com/Nilpo/dbt-sdk-python.git
 from typing import Dict, Optional
 from urllib.request import urlopen
 from urllib.parse import urlencode
+import urllib.error
 import json
 import time
 
@@ -103,8 +104,12 @@ class Dbt:
         feed = None
         uri = self._get_api_uri(resource_group, resource, params) or None
         if uri is not None:
-            with urlopen(uri) as response:
-                feed = response.read().decode()
+            try:
+                with urlopen(uri) as response:
+                    feed = response.read().decode()
+            except urllib.error.HTTPError as e:
+                print(e)
+                raise
 
         return feed
 
@@ -120,6 +125,8 @@ class Dbt:
         # request_params = dict(self._dbt_params)
         # request_params.update(params)
         request_params = dict(self._dbt_params, **params)
+        # remove keys with empty values
+        request_params = {k: v for k, v in request_params.items() if v is not None}
         query_string = urlencode(request_params)
 
         return self._api_uri + '/' + resource_group + '/' + resource + '?' + query_string
@@ -252,10 +259,10 @@ class Dbt:
             'language_code': language_code,
             'language_family_code': language_family_code,
             'version_code': version_code,
-            'updated': str(updated),
+            'updated': updated,
             'status': status,
             'expired': expired,
-            'organization_id': str(org_id)
+            'organization_id': org_id
         }
 
         return self[self._response]('library', 'volume', params)
@@ -278,7 +285,7 @@ class Dbt:
             'media': media,
             'delivery': delivery,
             'status': status,
-            'organization_id': str(org_id),
+            'organization_id': org_id,
             'full_word': full_word
         }
 
@@ -302,7 +309,7 @@ class Dbt:
             'media': media,
             'delivery': delivery,
             'status': status,
-            'organization_id': str(org_id),
+            'organization_id': org_id,
             'full_word': full_word
         }
 
@@ -371,9 +378,9 @@ class Dbt:
         params = {
             'dam_id': dam_id,
             'book_id': book_id,
-            'chapter_id': str(chapter_id),
-            'verse_start': str(verse_start),
-            'verse_end': str(verse_end)
+            'chapter_id': chapter_id,
+            'verse_start': verse_start,
+            'verse_end': verse_end
         }
 
         return self[self._response]('library', 'verseinfo', params)
@@ -388,8 +395,8 @@ class Dbt:
 
         params = {
             'language_code': language_code,
-            'start': str(start),
-            'end': str(end)
+            'start': start,
+            'end': end
         }
 
         return self[self._response]('library', 'numbers', params)
@@ -403,7 +410,7 @@ class Dbt:
 
         params = {
             'dam_id': dam_id,
-            'organization_id': str(org_id)
+            'organization_id': org_id
         }
 
         return self[self._response]('library', 'metadata', params)
@@ -429,7 +436,7 @@ class Dbt:
 
         params = {
             'name': org_name,
-            'id': str(org_id)
+            'id': org_id
         }
 
         return self[self._response]('library', 'organization', params)
@@ -448,9 +455,9 @@ class Dbt:
         params = {
             'dam_id': dam_id,
             'book_id': book_id,
-            'chapter_id': str(chapter_id),
-            'verse_start': str(verse_start),
-            'verse_end': str(verse_end),
+            'chapter_id': chapter_id,
+            'verse_start': verse_start,
+            'verse_end': verse_end,
             'markup': markup
         }
 
@@ -470,8 +477,8 @@ class Dbt:
             'dam_id': dam_id,
             'query': query,
             'book_id': book_id,
-            'offset': str(offset),
-            'limit': str(limit)
+            'offset': offset,
+            'limit': limit
         }
 
         return self[self._response]('text', 'search', params)
@@ -504,8 +511,8 @@ class Dbt:
             'dam_id': dam_id,
             'encoding': encoding,
             'book_id': book_id,
-            'chapter_id': str(chapter_id),
-            'verse_id': str(verse_id)
+            'chapter_id': chapter_id,
+            'verse_id': verse_id
         }
 
         return self[self._response]('video', 'jesusfilm', params)
@@ -526,10 +533,10 @@ class Dbt:
             'dam_id': dam_id,
             'encoding': encoding,
             'resolution': resolution,
-            'segment_order': str(segment_order),
+            'segment_order': segment_order,
             'book_id': book_id,
-            'chapter_id': str(chapter_id),
-            'verse_id': str(verse_id)
+            'chapter_id': chapter_id,
+            'verse_id': verse_id
         }
 
         return self[self._response]('video', 'videopath', params)
