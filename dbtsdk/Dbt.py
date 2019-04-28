@@ -58,15 +58,22 @@ class Dbt:
             'echo': echo
         }
 
-        if 'array' in response_type:
-            self._response = '_get_list_response'
-        elif 'url' in response_type:
-            self._response = '_get_api_uri'
-        else:
+        try :
+            if 'array' in response_type:
+                self._response = '_get_list_response'
+            elif 'url' in response_type:
+                self._response = '_get_api_uri'
+            else:
+                self._response = '_get_json_response'
+
+        except:
             self._response = '_get_json_response'
 
-    def __getattribute__(self, item):
+    def __getattr__(self, item):
         return self[item]
+
+    def __getitem__(self, item):
+        return getattr(self, item)
 
     def _get_list_response(self, resource_group: str, resource: str, params: Dict[str, str]) -> Optional[Dict]:
         """Imports a JSON api response to a Python List to be used by the server.
